@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       message: "Application submitted successfully",
       applicationId: `CED-${Date.now()}`,
     })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, message: "Failed to submit application" }, { status: 500 })
   }
 }

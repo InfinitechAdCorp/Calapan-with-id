@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, Edit2, Trash2, Search, X } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 interface Project {
   id: number
@@ -143,12 +144,17 @@ export default function ProjectsPage() {
 
                     <td className="px-6 py-4 text-sm">
                       {item.image_url ? (
-                        <img 
-                          src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${item.image_url}`} 
-                          alt={item.title}
-                          className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                        <div 
+                          className="relative w-16 h-16 rounded cursor-pointer hover:opacity-80 transition-opacity"
                           onClick={() => openImageModal(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${item.image_url}`)}
-                        />
+                        >
+                          <Image 
+                            src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${item.image_url}`} 
+                            alt={item.title}
+                            fill
+                            className="object-cover rounded"
+                          />
+                        </div>
                       ) : (
                         <div className="w-16 h-16 bg-muted rounded flex items-center justify-center text-muted-foreground text-xs">
                           No Image
@@ -206,12 +212,15 @@ export default function ProjectsPage() {
             >
               <X className="w-6 h-6 text-gray-800" />
             </button>
-            <img 
-              src={selectedImage}
-              alt="Project preview"
-              className="max-w-full max-h-full object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
+            <div className="relative w-full h-full">
+              <Image 
+                src={selectedImage}
+                alt="Project preview"
+                fill
+                className="object-contain rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
           </div>
         </div>
       )}

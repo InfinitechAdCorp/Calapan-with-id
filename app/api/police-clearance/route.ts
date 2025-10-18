@@ -6,15 +6,15 @@ function camelToSnake(str: string): string {
   return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
 }
 
-function convertKeysToSnakeCase(obj: any): any {
+function convertKeysToSnakeCase(obj: unknown): unknown {
   if (Array.isArray(obj)) {
     return obj.map((item) => convertKeysToSnakeCase(item))
   } else if (obj !== null && typeof obj === "object") {
     return Object.keys(obj).reduce((acc, key) => {
       const snakeKey = camelToSnake(key)
-      acc[snakeKey] = convertKeysToSnakeCase(obj[key])
+      acc[snakeKey] = convertKeysToSnakeCase((obj as Record<string, unknown>)[key])
       return acc
-    }, {} as any)
+    }, {} as Record<string, unknown>)
   }
   return obj
 }

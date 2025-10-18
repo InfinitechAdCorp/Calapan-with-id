@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, Edit2, Trash2, Search, Loader2, ImageIcon } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 interface Event {
   id: number
@@ -197,14 +198,15 @@ export default function EventsPage() {
                   <tr key={item.id} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4">
                       <div 
-                        className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+                        className="relative w-16 h-16 rounded-lg overflow-hidden bg-muted flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
                         onClick={() => item.image_url && setSelectedImage(getImageUrl(item.image_url))}
                       >
                         {item.image_url ? (
-                          <img
+                          <Image
                             src={getImageUrl(item.image_url) || ''}
                             alt={item.title}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
                           />
                         ) : (
                           <ImageIcon className="w-6 h-6 text-muted-foreground" />
@@ -300,21 +302,24 @@ export default function EventsPage() {
           className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedImage(null)}
         >
-          <div className="relative max-w-4xl max-h-[90vh] w-full">
+          <div className="relative max-w-4xl max-h-[90vh] w-full h-full">
             <button
               onClick={() => setSelectedImage(null)}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors z-10"
             >
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <img
-              src={selectedImage}
-              alt="Event preview"
-              className="w-full h-full object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={selectedImage}
+                alt="Event preview"
+                fill
+                className="object-contain rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
           </div>
         </div>
       )}

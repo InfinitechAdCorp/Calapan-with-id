@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(data)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, message: "Failed to process ambulance request" }, { status: 500 })
   }
 }

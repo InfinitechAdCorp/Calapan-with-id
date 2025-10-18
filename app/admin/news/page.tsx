@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, Edit2, Trash2, Search, X } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 interface NewsItem {
   id: number
@@ -126,12 +127,17 @@ export default function NewsPage() {
                     <td className="px-6 py-4 text-sm text-foreground font-medium">{item.title}</td>
                     <td className="px-6 py-4 text-sm">
                       {item.image_url ? (
-                        <img 
-                          src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${item.image_url}`} 
-                          alt={item.title}
-                          className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                        <div 
+                          className="relative w-16 h-16 rounded cursor-pointer hover:opacity-80 transition-opacity"
                           onClick={() => openImageModal(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${item.image_url}`)}
-                        />
+                        >
+                          <Image 
+                            src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${item.image_url}`} 
+                            alt={item.title}
+                            fill
+                            className="object-cover rounded"
+                          />
+                        </div>
                       ) : (
                         <div className="w-16 h-16 bg-muted rounded flex items-center justify-center text-muted-foreground text-xs">
                           No Image
@@ -194,19 +200,22 @@ export default function NewsPage() {
           className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
           onClick={closeImageModal}
         >
-          <div className="relative max-w-4xl max-h-[90vh] w-full">
+          <div className="relative max-w-4xl max-h-[90vh] w-full h-full">
             <button
               onClick={closeImageModal}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors z-10"
             >
               <X className="w-8 h-8" />
             </button>
-            <img
-              src={selectedImage}
-              alt="Preview"
-              className="w-full h-full object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={selectedImage}
+                alt="Preview"
+                fill
+                className="object-contain rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
           </div>
         </div>
       )}

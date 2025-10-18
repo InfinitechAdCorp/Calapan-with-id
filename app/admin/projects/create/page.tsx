@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 export default function CreateProjectPage() {
   const router = useRouter()
@@ -222,8 +223,13 @@ export default function CreateProjectPage() {
               className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
             />
             {imagePreview && (
-              <div className="mt-4">
-                <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="max-w-xs rounded-lg" />
+              <div className="mt-4 relative w-full max-w-xs h-48">
+                <Image 
+                  src={imagePreview} 
+                  alt="Preview" 
+                  fill
+                  className="object-cover rounded-lg"
+                />
               </div>
             )}
           </div>

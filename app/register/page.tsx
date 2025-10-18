@@ -4,6 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -281,11 +282,14 @@ export default function RegisterPage() {
                 <div className="border-2 border-dashed rounded-lg p-4 text-center">
                   {previewUrls.validId ? (
                     <div className="space-y-2">
-                      <img
-                        src={previewUrls.validId || "/placeholder.svg"}
-                        alt="Valid ID Preview"
-                        className="w-full h-40 object-cover rounded"
-                      />
+                      <div className="relative w-full h-40">
+                        <Image
+                          src={previewUrls.validId}
+                          alt="Valid ID Preview"
+                          fill
+                          className="object-cover rounded"
+                        />
+                      </div>
                       <Button
                         type="button"
                         variant="outline"
@@ -324,11 +328,14 @@ export default function RegisterPage() {
                 <div className="border-2 border-dashed rounded-lg p-4 text-center">
                   {previewUrls.selfieId ? (
                     <div className="space-y-2">
-                      <img
-                        src={previewUrls.selfieId || "/placeholder.svg"}
-                        alt="Selfie Preview"
-                        className="w-full h-40 object-cover rounded"
-                      />
+                      <div className="relative w-full h-40">
+                        <Image
+                          src={previewUrls.selfieId}
+                          alt="Selfie Preview"
+                          fill
+                          className="object-cover rounded"
+                        />
+                      </div>
                       <Button
                         type="button"
                         variant="outline"
@@ -351,7 +358,7 @@ export default function RegisterPage() {
                       <div className="flex flex-col items-center gap-2">
                         <Camera className="w-6 h-6 text-gray-400" />
                         <span className="text-sm text-gray-600">Click to capture selfie</span>
-                        <span className="text-xs text-gray-500">We'll access your camera</span>
+                        <span className="text-xs text-gray-500">We will access your camera</span>
                       </div>
                     </button>
                   )}

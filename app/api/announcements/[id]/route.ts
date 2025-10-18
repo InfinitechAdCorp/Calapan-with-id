@@ -2,9 +2,10 @@ import { type NextRequest, NextResponse } from "next/server"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const response = await fetch(`${API_URL}/api/announcements/${params.id}`, {
+    const { id } = await params
+    const response = await fetch(`${API_URL}/api/announcements/${id}`, {
       headers: {
         "Accept": "application/json",
       },
@@ -24,8 +25,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const formData = await request.formData()
     
     console.log("[v0] Updating announcement with FormData")
@@ -33,7 +35,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     // Laravel doesn't support PUT with FormData directly, so we need to use POST with _method
     formData.append('_method', 'PUT')
     
-    const response = await fetch(`${API_URL}/api/announcements/${params.id}`, {
+    const response = await fetch(`${API_URL}/api/announcements/${id}`, {
       method: "POST",
       headers: { 
         "Accept": "application/json",
@@ -65,9 +67,10 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const response = await fetch(`${API_URL}/api/announcements/${params.id}`, {
+    const { id } = await params
+    const response = await fetch(`${API_URL}/api/announcements/${id}`, {
       method: "DELETE",
       headers: {
         "Accept": "application/json",

@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 
 const API_URL = process.env.NEXT_PUBLIC_URL || "http://localhost:8000"
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log("[v0] News API GET - Fetching from:", `${API_URL}/api/news`)
 
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
           },
           { status: response.status },
         )
-      } catch (parseError) {
+      } catch {
         console.log("[v0] News API - Could not parse as JSON. Full response:")
         console.log(responseText)
 

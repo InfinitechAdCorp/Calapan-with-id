@@ -5,6 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { ChevronLeft, MapPin, Upload, AlertCircle, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 interface ApiResponse {
   success: boolean
@@ -325,15 +326,16 @@ export default function ReportIssuePage() {
               <div className="grid grid-cols-3 gap-3 mb-3">
                 {previews.map((preview, index) => (
                   <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
-                    <img
-                      src={preview || "/placeholder.svg"}
+                    <Image
+                      src={preview}
                       alt={`Preview ${index + 1}`}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                     <button
                       type="button"
                       onClick={() => removeFile(index)}
-                      className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-600 transition-colors"
+                      className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-600 transition-colors z-10"
                     >
                       ×
                     </button>

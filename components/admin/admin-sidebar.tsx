@@ -8,7 +8,6 @@ import {
   Calendar,
   Megaphone,
   Briefcase,
-  Heart,
   AlertTriangle,
   FileText,
   ChevronDown,

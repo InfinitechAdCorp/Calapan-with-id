@@ -290,7 +290,7 @@ export default function MedicalAssistancePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="doctorName">Doctor's Name *</Label>
+                    <Label htmlFor="doctorName">Doctors Name *</Label>
                     <Input
                       id="doctorName"
                       value={formData.doctorName}

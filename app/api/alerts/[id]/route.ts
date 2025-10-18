@@ -23,12 +23,22 @@ function formatDateForInput(dateString: string | null | undefined): string {
   }
 }
 
+interface BackendAlertBody {
+  disaster_date?: string
+  disaster_type?: string
+  establishment_type?: string
+  suspension_start?: string
+  suspension_end?: string
+  notes?: string
+  status?: string
+}
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     const apiUrl = `${API_BASE_URL}/api/alerts/${id}`.replace('/api/api/', '/api/')
     const response = await fetch(apiUrl, {
@@ -82,16 +92,16 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     const body = await request.json()
 
     console.log('Received body from frontend:', body)
 
     // Map frontend field names to backend field names
-    const backendBody: any = {}
+    const backendBody: BackendAlertBody = {}
     
     if (body.disaster_date !== undefined) backendBody.disaster_date = body.disaster_date
     if (body.disaster_type !== undefined) backendBody.disaster_type = body.disaster_type
@@ -118,7 +128,7 @@ export async function PATCH(
 
     const apiUrl = `${API_BASE_URL}/api/alerts/${id}`.replace('/api/api/', '/api/')
     const response = await fetch(apiUrl, {
-      method: 'PUT', // Changed from PATCH to PUT
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -155,10 +165,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     const apiUrl = `${API_BASE_URL}/api/alerts/${id}`.replace('/api/api/', '/api/')
     const response = await fetch(apiUrl, {

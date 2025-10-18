@@ -379,7 +379,7 @@ export default function MarriageLicensePage() {
                 </div>
                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                   <p className="text-sm text-orange-800">
-                    <strong>Note:</strong> Both parties must appear together at the Local Civil Registrar's Office for
+                    <strong>Note:</strong> Both parties must appear together at the Local Civil Registrars Office for
                     the marriage license application interview.
                   </p>
                 </div>

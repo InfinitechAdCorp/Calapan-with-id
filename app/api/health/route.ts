@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 
 const API_URL = process.env.API_URL || "http://localhost:8000"
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log("[v0] Health API GET - Fetching from:", `${API_URL}/api/health`)
 
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
 
-    const data: Record<string, any> = {}
+    const data: Record<string, FormDataEntryValue> = {}
     for (const [key, value] of formData.entries()) {
       data[key] = value
     }
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
           },
           { status: response.status },
         )
-      } catch (parseError) {
+      } catch {
         console.log("[v0] Health API - Could not parse error as JSON, returning raw text")
         return NextResponse.json(
           {

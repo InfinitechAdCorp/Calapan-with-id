@@ -23,12 +23,12 @@ async function parseResponse(response: Response) {
 
   try {
     return JSON.parse(responseText)
-  } catch (error) {
+  } catch {
     throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}...`)
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log("[v0] Projects API GET - Fetching from:", `${API_URL}/api/projects`)
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { ChevronLeft, Calendar, Eye, Share2, Bookmark } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 
 interface NewsArticle {
@@ -43,7 +44,6 @@ export default function NewsPage() {
     { value: "announcements", label: "Announcements" },
     { value: "events", label: "Events" },
     { value: "projects", label: "Projects" },
-
   ]
 
   const transformArticle = (article: ApiNewsArticle, category: string): NewsArticle => {
@@ -75,20 +75,18 @@ export default function NewsPage() {
     const fetchAllData = async () => {
       try {
         // Fetch all categories in parallel
-        const [newsRes, announcementsRes, eventsRes, projectsRes, healthRes] = await Promise.all([
+        const [newsRes, announcementsRes, eventsRes, projectsRes] = await Promise.all([
           fetch("/api/news"),
           fetch("/api/announcements"),
           fetch("/api/events"),
           fetch("/api/projects"),
-          fetch("/api/health")
         ])
 
-        const [newsData, announcementsData, eventsData, projectsData, healthData] = await Promise.all([
+        const [newsData, announcementsData, eventsData, projectsData] = await Promise.all([
           newsRes.json(),
           announcementsRes.json(),
           eventsRes.json(),
           projectsRes.json(),
-          healthRes.json()
         ])
 
         // Transform each category
@@ -103,9 +101,6 @@ export default function NewsPage() {
         
         const transformedProjects = (Array.isArray(projectsData) ? projectsData : projectsData.projects || [])
           .map((article: ApiNewsArticle) => transformArticle(article, "projects"))
-        
-        const transformedHealth = (Array.isArray(healthData) ? healthData : healthData.health || [])
-          .map((article: ApiNewsArticle) => transformArticle(article, "health"))
 
         setNews(transformedNews)
         setAnnouncements(transformedAnnouncements)
@@ -133,7 +128,6 @@ export default function NewsPage() {
         return events
       case "projects":
         return projects
-     
       default:
         return news
     }
@@ -204,11 +198,13 @@ export default function NewsPage() {
                   className="group block bg-white rounded-2xl overflow-hidden shadow-md border border-orange-100 hover:shadow-xl hover:border-orange-300 transition-all duration-300 hover:-translate-y-1"
                 >
                   {article.image && (
-                    <div className="aspect-video bg-gradient-to-br from-orange-100 to-orange-50 overflow-hidden">
-                      <img
+                    <div className="relative aspect-video bg-gradient-to-br from-orange-100 to-orange-50 overflow-hidden">
+                      <Image
                         src={article.image}
                         alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
                   )}

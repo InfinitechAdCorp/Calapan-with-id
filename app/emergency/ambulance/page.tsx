@@ -28,7 +28,7 @@ export default function AmbulanceRequestPage() {
             lng: position.coords.longitude,
           })
         },
-        (error) => {
+        () => {
           toast({
             title: "Location Error",
             description: "Unable to get your location. Please enter your address manually.",
@@ -75,7 +75,7 @@ export default function AmbulanceRequestPage() {
           variant: "destructive",
         })
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Request Failed",
         description: "Failed to submit request. Please call emergency hotline.",

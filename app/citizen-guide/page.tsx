@@ -26,7 +26,7 @@ export default function CitizenGuidePage() {
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">Step 1: Visit the Registration Page</h4>
                   <p className="text-sm text-gray-600">
-                    Go to the Account section and click on "Register" or "Sign Up".
+                    Go to the Account section and click on Register or Sign Up.
                   </p>
                 </div>
                 <div>
@@ -65,7 +65,7 @@ export default function CitizenGuidePage() {
           fullContent: (
             <div className="space-y-4">
               <p className="text-sm text-gray-600">
-                Different services require different documents. Here's a comprehensive list of commonly accepted
+                Different services require different documents. Here is a comprehensive list of commonly accepted
                 documents:
               </p>
               <div className="space-y-3">
@@ -73,12 +73,12 @@ export default function CitizenGuidePage() {
                   <h4 className="font-semibold text-gray-900 mb-2">Primary Valid IDs (Government-Issued)</h4>
                   <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
                     <li>Philippine Passport</li>
-                    <li>Driver's License</li>
+                    <li>Drivers License</li>
                     <li>SSS ID / UMID</li>
                     <li>PhilHealth ID</li>
                     <li>TIN ID</li>
                     <li>Postal ID</li>
-                    <li>Voter's ID</li>
+                    <li>Voters ID</li>
                     <li>PRC ID (Professional Regulation Commission)</li>
                   </ul>
                 </div>

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, Loader2, Upload, X } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 export default function EditAnnouncementPage({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -222,16 +223,17 @@ export default function EditAnnouncementPage({ params }: { params: { id: string 
               Image
             </label>
             {imagePreview ? (
-              <div className="relative">
-                <img 
+              <div className="relative w-full h-48">
+                <Image 
                   src={imagePreview} 
                   alt="Preview" 
-                  className="w-full h-48 object-cover rounded-lg"
+                  fill
+                  className="object-cover rounded-lg"
                 />
                 <button
                   type="button"
                   onClick={removeImage}
-                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 z-10"
                 >
                   <X className="w-4 h-4" />
                 </button>

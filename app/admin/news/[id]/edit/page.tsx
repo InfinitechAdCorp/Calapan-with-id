@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 interface NewsItem {
   id: number
@@ -33,27 +34,27 @@ export default function EditNewsPage({ params }: { params: { id: string } }) {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch(`/api/news/${params.id}`)
+        if (!response.ok) throw new Error("Failed to fetch news")
+        const data = await response.json()
+        setFormData(data)
+        if (data.image) {
+          setImagePreview(data.image)
+        }
+        setError(null)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch news")
+        console.error("[v0] Error fetching news:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
     fetchNews()
   }, [params.id])
-
-  const fetchNews = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch(`/api/news/${params.id}`)
-      if (!response.ok) throw new Error("Failed to fetch news")
-      const data = await response.json()
-      setFormData(data)
-      if (data.image) {
-        setImagePreview(data.image)
-      }
-      setError(null)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch news")
-      console.error("[v0] Error fetching news:", err)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -184,8 +185,13 @@ export default function EditNewsPage({ params }: { params: { id: string } }) {
               className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
             />
             {imagePreview && (
-              <div className="mt-4">
-                <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="max-w-xs rounded-lg" />
+              <div className="mt-4 relative w-full max-w-xs h-48">
+                <Image 
+                  src={imagePreview} 
+                  alt="Preview" 
+                  fill
+                  className="object-cover rounded-lg"
+                />
               </div>
             )}
           </div>

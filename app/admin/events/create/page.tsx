@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, Upload, X } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -198,16 +199,17 @@ export default function CreateEventPage() {
                 </label>
               </div>
             ) : (
-              <div className="relative border border-border rounded-lg overflow-hidden">
-                <img 
+              <div className="relative border border-border rounded-lg overflow-hidden h-64">
+                <Image 
                   src={imagePreview} 
                   alt="Preview" 
-                  className="w-full h-64 object-cover"
+                  fill
+                  className="object-cover"
                 />
                 <button
                   type="button"
                   onClick={handleRemoveImage}
-                  className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+                  className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors z-10"
                 >
                   <X className="w-4 h-4" />
                 </button>

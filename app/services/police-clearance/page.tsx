@@ -97,7 +97,7 @@ export default function PoliceClearanceGuide() {
 
               <div className="mt-4 p-3 bg-orange-50 rounded-lg">
                 <p className="text-sm text-gray-700">
-                  <strong>Note:</strong> Requirements may vary. It's best to contact the police station beforehand to confirm the complete list of requirements and fees.
+                  <strong>Note:</strong> Requirements may vary. It is best to contact the police station beforehand to confirm the complete list of requirements and fees.
                 </p>
               </div>
             </div>

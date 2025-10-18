@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, Edit2, Trash2, Search, Loader2, Image as ImageIcon } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 interface Announcement {
   id: number
@@ -193,11 +194,14 @@ export default function AnnouncementsPage() {
                   <tr key={item.id} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4">
                       {item.image_url ? (
-                        <img 
-                          src={getImageUrl(item.image_url) || ''} 
-                          alt={item.title}
-                          className="w-12 h-12 object-cover rounded"
-                        />
+                        <div className="relative w-12 h-12">
+                          <Image 
+                            src={getImageUrl(item.image_url) || ''} 
+                            alt={item.title}
+                            fill
+                            className="object-cover rounded"
+                          />
+                        </div>
                       ) : (
                         <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
                           <ImageIcon className="w-6 h-6 text-muted-foreground" />

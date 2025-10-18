@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, Loader2, Upload, X } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 export default function CreateAnnouncementPage() {
   const router = useRouter()
@@ -128,11 +129,12 @@ export default function CreateAnnouncementPage() {
               Image
             </label>
             {imagePreview ? (
-              <div className="relative">
-                <img 
+              <div className="relative w-full h-48">
+                <Image 
                   src={imagePreview} 
                   alt="Preview" 
-                  className="w-full h-48 object-cover rounded-lg"
+                  fill
+                  className="object-cover rounded-lg"
                 />
                 <button
                   onClick={removeImage}

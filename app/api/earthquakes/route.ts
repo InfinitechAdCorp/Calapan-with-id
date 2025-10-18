@@ -26,8 +26,6 @@ export async function GET() {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
           },
           signal: controller.signal,
-          // @ts-ignore - Node.js specific option
-          rejectUnauthorized: false, // Allow self-signed certificates
         });
         
         clearTimeout(timeoutId);

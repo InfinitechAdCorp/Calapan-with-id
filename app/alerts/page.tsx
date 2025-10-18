@@ -25,6 +25,22 @@ interface EarthquakeAlert {
   longitude: number
 }
 
+interface EarthquakeFeature {
+  id: string
+  geometry: {
+    coordinates: [number, number, number]
+  }
+  properties: {
+    mag: number
+    place: string
+    time: number
+  }
+}
+
+interface USGSResponse {
+  features: EarthquakeFeature[]
+}
+
 export default function UserAlertsPage() {
   const [adminAlerts, setAdminAlerts] = useState<AdminAlert[]>([])
   const [earthquakeAlerts, setEarthquakeAlerts] = useState<EarthquakeAlert[]>([])
@@ -58,10 +74,10 @@ export default function UserAlertsPage() {
       )
 
       if (earthquakeResponse.ok) {
-        const result = await earthquakeResponse.json()
+        const result = (await earthquakeResponse.json()) as USGSResponse
         const data = result?.features || []
 
-        const earthquakes: EarthquakeAlert[] = data.map((feature: any) => {
+        const earthquakes: EarthquakeAlert[] = data.map((feature: EarthquakeFeature) => {
           const coords = feature.geometry.coordinates
           const lat = coords[1]
           const lon = coords[0]

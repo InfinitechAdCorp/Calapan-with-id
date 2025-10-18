@@ -37,29 +37,29 @@ export default function EditAlertPage({ params }: { params: { id: string } }) {
 
   // Fetch alert on mount
   useEffect(() => {
+    const fetchAlert = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const response = await fetch(`/api/alerts/${params.id}`)
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch alert')
+        }
+        
+        const data = await response.json()
+        setFormData(data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred')
+        console.error('Error fetching alert:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
     fetchAlert()
   }, [params.id])
-
-  const fetchAlert = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      
-      const response = await fetch(`/api/alerts/${params.id}`)
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch alert')
-      }
-      
-      const data = await response.json()
-      setFormData(data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-      console.error('Error fetching alert:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
