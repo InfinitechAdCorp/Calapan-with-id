@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import {
   Dialog,
   DialogContent,
@@ -66,7 +67,7 @@ export default function UserApprovalDialog({ user, open, onOpenChange, onSubmit 
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Review User Application</DialogTitle>
-          <DialogDescription>Review the user's information and documents before approval</DialogDescription>
+          <DialogDescription>Review the user&apos;s information and documents before approval</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -110,21 +111,27 @@ export default function UserApprovalDialog({ user, open, onOpenChange, onSubmit 
               {user.valid_id && (
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Valid ID</p>
-                  <img
-                    src={`${API_URL}/${user.valid_id}`}
-                    alt="Valid ID"
-                    className="w-full h-48 object-cover rounded border"
-                  />
+                  <div className="relative w-full h-48">
+                    <Image
+                      src={`${API_URL}/${user.valid_id}`}
+                      alt="Valid ID"
+                      fill
+                      className="object-cover rounded border"
+                    />
+                  </div>
                 </div>
               )}
               {user.selfie_id && (
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Selfie with ID</p>
-                  <img
-                    src={`${API_URL}/${user.selfie_id}`}
-                    alt="Selfie"
-                    className="w-full h-48 object-cover rounded border"
-                  />
+                  <div className="relative w-full h-48">
+                    <Image
+                      src={`${API_URL}/${user.selfie_id}`}
+                      alt="Selfie"
+                      fill
+                      className="object-cover rounded border"
+                    />
+                  </div>
                 </div>
               )}
             </div>

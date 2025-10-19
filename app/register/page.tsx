@@ -4,13 +4,14 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Eye, EyeOff, Loader2, Upload, Check } from "lucide-react"
+import { Eye, EyeOff, Loader2, Upload } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 const USER_ROLES = [
@@ -113,7 +114,7 @@ export default function RegisterPage() {
       if (!response.ok) {
         if (responseData.errors) {
           const errorMessages = Object.values(responseData.errors).flat().join(", ")
-          throw new Error(errorMessages)
+          throw new Error(errorMessages as string)
         }
         throw new Error(responseData.message || "Registration failed")
       }
@@ -295,11 +296,14 @@ export default function RegisterPage() {
                 <div className="border-2 border-dashed rounded-lg p-4 text-center">
                   {previewUrls.validId ? (
                     <div className="space-y-2">
-                      <img
-                        src={previewUrls.validId || "/placeholder.svg"}
-                        alt="Valid ID Preview"
-                        className="w-full h-40 object-cover rounded"
-                      />
+                      <div className="relative w-full h-40">
+                        <Image
+                          src={previewUrls.validId}
+                          alt="Valid ID Preview"
+                          fill
+                          className="object-cover rounded"
+                        />
+                      </div>
                       <Button
                         type="button"
                         variant="outline"
@@ -337,11 +341,14 @@ export default function RegisterPage() {
                 <div className="border-2 border-dashed rounded-lg p-4 text-center">
                   {previewUrls.selfieId ? (
                     <div className="space-y-2">
-                      <img
-                        src={previewUrls.selfieId || "/placeholder.svg"}
-                        alt="Selfie Preview"
-                        className="w-full h-40 object-cover rounded"
-                      />
+                      <div className="relative w-full h-40">
+                        <Image
+                          src={previewUrls.selfieId}
+                          alt="Selfie Preview"
+                          fill
+                          className="object-cover rounded"
+                        />
+                      </div>
                       <Button
                         type="button"
                         variant="outline"

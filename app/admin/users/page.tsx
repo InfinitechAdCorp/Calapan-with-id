@@ -20,6 +20,10 @@ interface User {
   created_at: string
 }
 
+interface ApiResponse {
+  data: User[]
+}
+
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -50,9 +54,9 @@ export default function UsersPage() {
         throw new Error("Failed to fetch users")
       }
 
-      const data = await response.json()
+      const data: ApiResponse = await response.json()
       // Map verification_status to status if status is missing
-      const mappedUsers = (data.data || []).map((user: any) => ({
+      const mappedUsers = (data.data || []).map((user: User) => ({
         ...user,
         status: user.status || user.verification_status || "pending",
       }))
