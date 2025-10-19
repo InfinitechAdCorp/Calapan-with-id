@@ -37,16 +37,15 @@ export default function CitizenGuidePage() {
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-1">Step 3: Verify Your Email</h4>
+                  <h4 className="font-semibold text-gray-900 mb-1">Step 3: Set Your Password</h4>
                   <p className="text-sm text-gray-600">
-                    Check your email inbox for a verification link. Click the link to verify your account.
+                   Create a strong password (minimum 8 characters) and confirm it. Use a mix of uppercase, lowercase, numbers, and symbols for better security.
                   </p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">Step 4: Complete Your Profile</h4>
                   <p className="text-sm text-gray-600">
-                    Log in and complete your profile by adding additional information such as your barangay, date of
-                    birth, and valid ID.
+                    Upload a valid government-issued ID (Voters ID.) and a clear selfie photo. Files must be in PNG, JPG, or GIF format and not exceed 5MB.
                   </p>
                 </div>
               </div>
@@ -59,53 +58,7 @@ export default function CitizenGuidePage() {
             </div>
           ),
         },
-        {
-          title: "Required Documents",
-          content: "List of valid IDs and documents needed for various services.",
-          fullContent: (
-            <div className="space-y-4">
-              <p className="text-sm text-gray-600">
-                Different services require different documents. Here is a comprehensive list of commonly accepted
-                documents:
-              </p>
-              <div className="space-y-3">
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Primary Valid IDs (Government-Issued)</h4>
-                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                    <li>Philippine Passport</li>
-                    <li>Drivers License</li>
-                    <li>SSS ID / UMID</li>
-                    <li>PhilHealth ID</li>
-                    <li>TIN ID</li>
-                    <li>Postal ID</li>
-                    <li>Voters ID</li>
-                    <li>PRC ID (Professional Regulation Commission)</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Supporting Documents</h4>
-                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                    <li>Birth Certificate (PSA-issued)</li>
-                    <li>Marriage Certificate (if applicable)</li>
-                    <li>Barangay Clearance</li>
-                    <li>Proof of Residency (utility bills, lease contract)</li>
-                    <li>Community Tax Certificate (Cedula)</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">For Business-Related Services</h4>
-                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                    <li>DTI Registration (for sole proprietorship)</li>
-                    <li>SEC Registration (for corporations/partnerships)</li>
-                    <li>Barangay Business Clearance</li>
-                    <li>Fire Safety Inspection Certificate</li>
-                    <li>Sanitary Permit</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          ),
-        },
+       
       ],
     },
     {

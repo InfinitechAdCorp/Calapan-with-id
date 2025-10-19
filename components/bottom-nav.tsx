@@ -2,10 +2,21 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 import { Home, Grid3x3, Newspaper, AlertTriangle, User } from "lucide-react"
 
 export function BottomNav() {
   const pathname = usePathname()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkWidth = () => setIsMobile(window.innerWidth < 1024)
+    checkWidth()
+    window.addEventListener("resize", checkWidth)
+    return () => window.removeEventListener("resize", checkWidth)
+  }, [])
+
+  if (!isMobile) return null
 
   const navItems = [
     { icon: Home, label: "Home", href: "/" },
@@ -16,7 +27,7 @@ export function BottomNav() {
   ]
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
       <div className="flex items-center justify-around px-2 py-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href

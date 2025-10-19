@@ -39,9 +39,20 @@ export default function CedulaPage() {
     setError(null)
 
     try {
+      const token = localStorage.getItem("token")
+
+      if (!token) {
+        setError("No authentication token found. Please log in again.")
+        setIsSubmitting(false)
+        return
+      }
+
       const response = await fetch("/api/cedula", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(formData),
       })
 

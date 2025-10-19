@@ -1,20 +1,29 @@
 import { type NextRequest, NextResponse } from "next/server"
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get("id")
+    const authHeader = request.headers.get("authorization")
 
     const url = id
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/business-permit/${id}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/business-permit`
+      ? `${API_URL}/api/business-permit/${id}`
+      : `${API_URL}/api/business-permit`
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    }
+
+    if (authHeader) {
+      headers.Authorization = authHeader
+    }
 
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers,
     })
 
     const data = await response.json()
@@ -35,6 +44,15 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const authHeader = request.headers.get("authorization")
+
+    if (!authHeader) {
+      return NextResponse.json(
+        { success: false, message: "No authorization token provided" },
+        { status: 401 },
+      )
+    }
+
     const body = await request.json()
 
     // Convert camelCase to snake_case for Laravel
@@ -53,16 +71,22 @@ export async function POST(request: NextRequest) {
       floor_area: body.floorArea,
     }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/business-permit`, {
+    console.log("[Business Permit] Submitting with token:", authHeader.substring(0, 30) + "...")
+
+    const response = await fetch(`${API_URL}/api/business-permit`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Authorization: authHeader,
       },
       body: JSON.stringify(payload),
     })
 
     const data = await response.json()
+
+    console.log("[Business Permit] Response status:", response.status)
+    console.log("[Business Permit] Response data:", data)
 
     if (!response.ok) {
       return NextResponse.json(
@@ -80,6 +104,15 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    const authHeader = request.headers.get("authorization")
+
+    if (!authHeader) {
+      return NextResponse.json(
+        { success: false, message: "No authorization token provided" },
+        { status: 401 },
+      )
+    }
+
     const body = await request.json()
     const { id, ...formData } = body
 
@@ -98,11 +131,12 @@ export async function PUT(request: NextRequest) {
       floor_area: formData.floorArea,
     }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/business-permit/${id}`, {
+    const response = await fetch(`${API_URL}/api/business-permit/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Authorization: authHeader,
       },
       body: JSON.stringify(payload),
     })
@@ -125,6 +159,15 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const authHeader = request.headers.get("authorization")
+
+    if (!authHeader) {
+      return NextResponse.json(
+        { success: false, message: "No authorization token provided" },
+        { status: 401 },
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const id = searchParams.get("id")
 
@@ -132,11 +175,12 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ success: false, message: "ID is required" }, { status: 400 })
     }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/business-permit/${id}`, {
+    const response = await fetch(`${API_URL}/api/business-permit/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Authorization: authHeader,
       },
     })
 

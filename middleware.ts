@@ -1,30 +1,42 @@
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("token")?.value
-  const { pathname } = request.nextUrl
+  const pathname = request.nextUrl.pathname
 
   // Public routes that don't require authentication
   const publicRoutes = ["/login", "/register", "/forgot-password"]
+
+  // Check if the current route is public
   const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route))
 
-  // Dashboard routes that require authentication
-  const isDashboardRoute = pathname.startsWith("/dashboard")
+  const token = request.cookies.get("auth_token")?.value
 
-  // If trying to access dashboard without token, redirect to login
-  if (isDashboardRoute && !token) {
+  if (pathname === "/" && !token) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
-  // If logged in and trying to access login/register, redirect to home
-  if (isPublicRoute && token) {
-    return NextResponse.redirect(new URL("/", request.url))
+  // If trying to access a protected route without a token, redirect to login
+  if (!isPublicRoute && !token) {
+    return NextResponse.redirect(new URL("/login", request.url))
+  }
+
+  // If trying to access login/register with a valid token, redirect to app
+  if (isPublicRoute && token && (pathname === "/login" || pathname === "/register")) {
+    return NextResponse.redirect(new URL("/app", request.url))
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register", "/forgot-password"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
 }

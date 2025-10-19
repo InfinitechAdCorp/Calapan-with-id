@@ -59,13 +59,30 @@ export default function BusinessPermitPage() {
     setError(null)
 
     try {
+      const token = localStorage.getItem("token")
+      
+      if (!token) {
+        setError("No authentication token found. Please log in again.")
+        setIsSubmitting(false)
+        return
+      }
+
+      console.log("Token from localStorage:", token.substring(0, 20) + "...")
+      console.log("Submitting form data:", formData)
+
       const response = await fetch("/api/business-permit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
         body: JSON.stringify(formData),
       })
 
       const data = await response.json()
+
+      console.log("Response status:", response.status)
+      console.log("Response data:", data)
 
       if (response.ok && data.success) {
         router.push("/account/applications?success=business-permit")

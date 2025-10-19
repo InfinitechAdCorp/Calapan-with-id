@@ -4,15 +4,14 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Eye, EyeOff, Loader2, Upload, Camera } from "lucide-react"
-import { CameraCapture } from "@/components/camera-capture"
+import { Eye, EyeOff, Loader2, Upload, Check } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 const USER_ROLES = [
   { value: "citizen", label: "Citizen", description: "Report issues and access city services" },
@@ -22,11 +21,11 @@ const USER_ROLES = [
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const [showCameraModal, setShowCameraModal] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -52,12 +51,13 @@ export default function RegisterPage() {
     }
   }
 
-  const handleSelfieCapture = (blob: Blob) => {
-    const file = new File([blob], "selfie.jpg", { type: "image/jpeg" })
-    setFormData({ ...formData, selfieId: file })
-    const url = URL.createObjectURL(blob)
-    setPreviewUrls({ ...previewUrls, selfieId: url })
-    setShowCameraModal(false)
+  const handleSelfieUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setFormData({ ...formData, selfieId: file })
+      const url = URL.createObjectURL(file)
+      setPreviewUrls({ ...previewUrls, selfieId: url })
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,14 +81,13 @@ export default function RegisterPage() {
     }
 
     if (!formData.selfieId) {
-      setError("Please capture a selfie")
+      setError("Please upload a selfie photo")
       return
     }
 
     setIsLoading(true)
 
     try {
-      // Create FormData for multipart/form-data
       const formDataToSend = new FormData()
       formDataToSend.append("name", formData.name)
       formDataToSend.append("email", formData.email)
@@ -100,7 +99,8 @@ export default function RegisterPage() {
       formDataToSend.append("valid_id", formData.validId)
       formDataToSend.append("selfie_id", formData.selfieId)
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+      const response = await fetch(`${apiUrl}/api/auth/register`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -118,15 +118,28 @@ export default function RegisterPage() {
         throw new Error(responseData.message || "Registration failed")
       }
 
-      // Access the nested data structure correctly
-      const { user, token } = responseData.data
+      const userData = responseData.data || responseData
+      const { user, token } = userData
 
       // Store token and user data
       localStorage.setItem("token", token)
       localStorage.setItem("user", JSON.stringify(user))
 
+      // Show success toast
+      toast({
+        title: "Account Created Successfully!",
+        description: "Your account has been created. Please wait for admin approval to access the platform.",
+        duration: 4000,
+      })
+
+      // Fixed redirect logic - check status for all roles
       if (user.role === "citizen") {
-        router.push("/")
+        // Check if citizen account needs approval
+        if (user.status === "pending") {
+          router.push("/dashboard/pending-approval")
+        } else {
+          router.push("/")
+        }
       } else if (user.status === "pending") {
         router.push("/dashboard/pending-approval")
       } else {
@@ -282,14 +295,11 @@ export default function RegisterPage() {
                 <div className="border-2 border-dashed rounded-lg p-4 text-center">
                   {previewUrls.validId ? (
                     <div className="space-y-2">
-                      <div className="relative w-full h-40">
-                        <Image
-                          src={previewUrls.validId}
-                          alt="Valid ID Preview"
-                          fill
-                          className="object-cover rounded"
-                        />
-                      </div>
+                      <img
+                        src={previewUrls.validId || "/placeholder.svg"}
+                        alt="Valid ID Preview"
+                        className="w-full h-40 object-cover rounded"
+                      />
                       <Button
                         type="button"
                         variant="outline"
@@ -322,20 +332,16 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {/* Selfie Capture */}
               <div className="space-y-2">
-                <Label>Selfie Photo</Label>
+                <Label htmlFor="selfieId">Selfie Photo</Label>
                 <div className="border-2 border-dashed rounded-lg p-4 text-center">
                   {previewUrls.selfieId ? (
                     <div className="space-y-2">
-                      <div className="relative w-full h-40">
-                        <Image
-                          src={previewUrls.selfieId}
-                          alt="Selfie Preview"
-                          fill
-                          className="object-cover rounded"
-                        />
-                      </div>
+                      <img
+                        src={previewUrls.selfieId || "/placeholder.svg"}
+                        alt="Selfie Preview"
+                        className="w-full h-40 object-cover rounded"
+                      />
                       <Button
                         type="button"
                         variant="outline"
@@ -345,22 +351,25 @@ export default function RegisterPage() {
                           setPreviewUrls({ ...previewUrls, selfieId: "" })
                         }}
                       >
-                        Retake
+                        Remove
                       </Button>
                     </div>
                   ) : (
-                    <button
-                      type="button"
-                      onClick={() => setShowCameraModal(true)}
-                      className="w-full"
-                      disabled={isLoading}
-                    >
+                    <label className="cursor-pointer">
                       <div className="flex flex-col items-center gap-2">
-                        <Camera className="w-6 h-6 text-gray-400" />
-                        <span className="text-sm text-gray-600">Click to capture selfie</span>
-                        <span className="text-xs text-gray-500">We will access your camera</span>
+                        <Upload className="w-6 h-6 text-gray-400" />
+                        <span className="text-sm text-gray-600">Click to upload or drag and drop</span>
+                        <span className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</span>
                       </div>
-                    </button>
+                      <input
+                        id="selfieId"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleSelfieUpload}
+                        className="hidden"
+                        disabled={isLoading}
+                      />
+                    </label>
                   )}
                 </div>
               </div>
@@ -386,8 +395,6 @@ export default function RegisterPage() {
           </CardFooter>
         </form>
       </Card>
-
-      {showCameraModal && <CameraCapture onCapture={handleSelfieCapture} onClose={() => setShowCameraModal(false)} />}
     </div>
   )
 }

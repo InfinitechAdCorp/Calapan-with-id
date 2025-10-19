@@ -4,6 +4,12 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get("id")
+    const authHeader = request.headers.get("authorization")
+    const token = authHeader?.replace("Bearer ", "")
+
+    if (!token) {
+      return NextResponse.json({ success: false, message: "Unauthorized - No token provided" }, { status: 401 })
+    }
 
     const url = id
       ? `${process.env.NEXT_PUBLIC_API_URL}/api/cedula/${id}`
@@ -14,6 +20,7 @@ export async function GET(request: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Authorization: `Bearer ${token}`,
       },
     })
 
@@ -36,6 +43,12 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+    const authHeader = request.headers.get("authorization")
+    const token = authHeader?.replace("Bearer ", "")
+
+    if (!token) {
+      return NextResponse.json({ success: false, message: "Unauthorized - No token provided" }, { status: 401 })
+    }
 
     // Convert camelCase to snake_case for Laravel
     const payload = {
@@ -57,6 +70,7 @@ export async function POST(request: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
     })
@@ -81,6 +95,12 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
     const { id, ...formData } = body
+    const authHeader = request.headers.get("authorization")
+    const token = authHeader?.replace("Bearer ", "")
+
+    if (!token) {
+      return NextResponse.json({ success: false, message: "Unauthorized - No token provided" }, { status: 401 })
+    }
 
     const payload = {
       full_name: formData.fullName,
@@ -101,6 +121,7 @@ export async function PUT(request: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
     })
@@ -125,6 +146,12 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get("id")
+    const authHeader = request.headers.get("authorization")
+    const token = authHeader?.replace("Bearer ", "")
+
+    if (!token) {
+      return NextResponse.json({ success: false, message: "Unauthorized - No token provided" }, { status: 401 })
+    }
 
     if (!id) {
       return NextResponse.json({ success: false, message: "ID is required" }, { status: 400 })
@@ -135,6 +162,7 @@ export async function DELETE(request: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Authorization: `Bearer ${token}`,
       },
     })
 

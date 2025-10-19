@@ -31,7 +31,7 @@ export function Sidebar() {
   const quickAccessItems = [
     { icon: List, label: "All Services", href: "/all-services" },
     { icon: FileText, label: "Citizen Guide", href: "/citizen-guide" },
-    { icon: Grid3x3, label: "e-Services", href: "/e-services" },
+    // { icon: Grid3x3, label: "e-Services", href: "/e-services" },
     { icon: GraduationCap, label: "Students", href: "/students" },
     { icon: Rocket, label: "Startup", href: "/startup" },
     { icon: Briefcase, label: "Business", href: "/business" },

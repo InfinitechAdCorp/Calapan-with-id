@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import {
   LayoutDashboard,
   Newspaper,
@@ -9,29 +9,67 @@ import {
   Megaphone,
   Briefcase,
   AlertTriangle,
+  User,
   FileText,
   ChevronDown,
+  LogOut,
 } from "lucide-react"
 import { useState } from "react"
 
 export function AdminSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const contentItems = [
     { icon: Newspaper, label: "News", href: "/admin/news" },
     { icon: Calendar, label: "Events", href: "/admin/events" },
     { icon: Megaphone, label: "Announcements", href: "/admin/announcements" },
     { icon: Briefcase, label: "Projects", href: "/admin/projects" },
-    // { icon: Heart, label: "Health", href: "/admin/health" },
   ]
 
   const managementItems = [
+    { icon: User, label: "Users", href: "/admin/users" },
     { icon: AlertTriangle, label: "Alerts", href: "/admin/alerts" },
     { icon: FileText, label: "Reports", href: "/admin/reports" },
   ]
 
   const isActive = (href: string) => pathname === href
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true)
+      
+      const token = localStorage.getItem("token")
+      
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      // Clear local storage
+      localStorage.removeItem("token")
+      localStorage.removeItem("user")
+
+      // Clear cookies
+      document.cookie = "auth_token=; path=/; max-age=0"
+
+      // Redirect to login
+      router.push("/login")
+    } catch (error) {
+      console.error("Logout error:", error)
+      // Still redirect even if API call fails
+      localStorage.removeItem("token")
+      localStorage.removeItem("user")
+      router.push("/login")
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
 
   return (
     <aside className="w-64 bg-white border-r border-border flex flex-col h-screen">
@@ -118,8 +156,16 @@ export function AdminSidebar() {
         </div>
       </nav>
 
-      {/* Footer */}
-      <div className="px-6 py-4 border-t border-border">
+      {/* Footer with Logout */}
+      <div className="px-6 py-4 border-t border-border space-y-3">
+        <button
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <LogOut className="w-4 h-4" />
+          {isLoggingOut ? "Logging out..." : "Logout"}
+        </button>
         <p className="text-xs text-muted-foreground">© 2025 Calapan City</p>
       </div>
     </aside>

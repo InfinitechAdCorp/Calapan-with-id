@@ -14,7 +14,7 @@ export default function AllServicesPage() {
   const allCategories = [
     { name: "Services", href: "/services", icon: "📋", color: "bg-orange-100" },
     { name: "Citizen Guide", href: "/citizen-guide", icon: "📖", color: "bg-amber-100" },
-    { name: "e-Services", href: "/e-services", icon: "💻", color: "bg-orange-200" },
+    // { name: "e-Services", href: "/e-services", icon: "💻", color: "bg-orange-200" },
     { name: "Emergency", href: "/emergency", icon: "🚨", color: "bg-red-100" },
     { name: "Students", href: "/students", icon: "🎓", color: "bg-orange-100" },
     { name: "Startup", href: "/startup", icon: "🚀", color: "bg-amber-100" },

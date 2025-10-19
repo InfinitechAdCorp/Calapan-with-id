@@ -79,9 +79,20 @@ export default function BuildingPermitPage() {
     setError(null)
 
     try {
+      const token = localStorage.getItem("token")
+
+      if (!token) {
+        setError("No authentication token found. Please log in again.")
+        setIsSubmitting(false)
+        return
+      }
+
       const response = await fetch("/api/building-permit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(formData),
       })
 

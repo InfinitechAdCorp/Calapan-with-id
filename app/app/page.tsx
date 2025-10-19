@@ -12,8 +12,25 @@ import {
   List,
 } from "lucide-react"
 import Link from "next/link"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { getToken, logoutAsync } from "@/lib/auth"
 
 export default function HomePage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const token = getToken()
+    if (!token) {
+      router.push("/login")
+    }
+  }, [router])
+
+  const handleLogout = async () => {
+    await logoutAsync()
+    router.push("/login")
+  }
+
   const services = [
     { icon: List, label: "Services", href: "/services", color: "bg-orange-100" },
     { icon: FileText, label: "Citizen Guide", href: "/citizen-guide", color: "bg-teal-100" },
@@ -41,19 +58,24 @@ export default function HomePage() {
                 className="text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg border-none outline-none w-48 lg:w-96"
               />
             </div>
-            <Link href="/alerts" className="relative">
-              <Bell className="w-6 h-6 text-gray-600" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">
-                3
-              </span>
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link href="/alerts" className="relative">
+                <Bell className="w-6 h-6 text-gray-600" />
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">
+                  3
+                </span>
+              </Link>
+              <button onClick={handleLogout} className="text-sm text-gray-600 hover:text-gray-900 font-medium">
+                Logout
+              </button>
+            </div>
           </div>
 
           {/* Greeting */}
           <div className="mb-2">
             <h1 className="text-2xl lg:text-3xl font-bold text-purple-900 leading-tight">
-             Mabuhay,
-            
+              Magandang umaga,
+              <br />
               Calapeño!
             </h1>
           </div>

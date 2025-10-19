@@ -31,7 +31,6 @@ export default function MapPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
 
   const categories = [
     { value: "all", label: "All", icon: MapPin, color: "bg-orange-500" },
@@ -115,8 +114,8 @@ export default function MapPage() {
           })
         },
         (error) => {
-          console.error("[v0] Error getting location:", error)
-        },
+          console.error("Error getting location:", error)
+        }
       )
     }
   }, [])
@@ -145,8 +144,10 @@ export default function MapPage() {
     const dLat = ((lat2 - lat1) * Math.PI) / 180
     const dLng = ((lng2 - lng1) * Math.PI) / 180
     const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2)
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLng / 2) ** 2
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     return (R * c).toFixed(1)
   }
@@ -198,15 +199,17 @@ export default function MapPage() {
         </div>
       </div>
 
-      {/* Map Placeholder */}
-      <div className="relative h-64 bg-gradient-to-br from-orange-100 to-orange-50 border-b border-gray-200">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <MapPin className="w-16 h-16 text-orange-400 mx-auto mb-3" />
-            <p className="text-gray-600 font-medium">Interactive Map</p>
-            <p className="text-sm text-gray-500">Calapan City, Oriental Mindoro</p>
-          </div>
-        </div>
+      {/* Default Map Embed */}
+      <div className="relative h-64 border-b border-gray-200">
+        <iframe
+          src="https://www.google.com/maps?q=Calapan+City+Hall,+Calapan+City,+Oriental+Mindoro&z=15&output=embed"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        ></iframe>
 
         {userLocation && (
           <div className="absolute top-4 right-4 bg-white rounded-full p-3 shadow-lg">
@@ -235,11 +238,17 @@ export default function MapPage() {
             const distance =
               userLocation && calculateDistance(userLocation.lat, userLocation.lng, location.lat, location.lng)
 
+            const mapsUrl = userLocation
+              ? `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${location.lat},${location.lng}`
+              : `https://www.google.com/maps?q=${location.lat},${location.lng}`
+
             return (
-              <button
+              <a
                 key={location.id}
-                onClick={() => setSelectedLocation(location)}
-                className="w-full bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow text-left"
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow text-left"
               >
                 <div className="flex items-start gap-4">
                   <div
@@ -275,79 +284,11 @@ export default function MapPage() {
                     </div>
                   </div>
                 </div>
-              </button>
+              </a>
             )
           })}
         </div>
       </main>
-
-      {/* Location Detail Modal */}
-      {selectedLocation && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-          onClick={() => setSelectedLocation(null)}
-        >
-          <div
-            className="bg-white rounded-2xl w-full max-w-lg md:max-w-2xl lg:max-w-3xl max-h-[80vh] overflow-y-auto shadow-xl mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-6">
-              <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6" />
-
-              <div
-                className={`${getLocationColor(selectedLocation.category)} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}
-              >
-                {(() => {
-                  const Icon = getLocationIcon(selectedLocation.category)
-                  return <Icon className="w-8 h-8 text-white" />
-                })()}
-              </div>
-
-              <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">{selectedLocation.name}</h2>
-              <p className="text-gray-600 text-center mb-6">{selectedLocation.address}</p>
-
-              <div className="space-y-3">
-                {selectedLocation.phone && (
-                  <a
-                    href={`tel:${selectedLocation.phone}`}
-                    className="w-full bg-orange-600 text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-2"
-                  >
-                    <Phone className="w-5 h-5" />
-                    Call {selectedLocation.phone}
-                  </a>
-                )}
-
-                <a
-                  href={`https://www.google.com/maps/dir/${userLocation?.lat},${userLocation?.lng}/${selectedLocation.lat},${selectedLocation.lng}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-2"
-                >
-                  <Navigation className="w-5 h-5" />
-                  Get Directions
-                </a>
-
-                <button
-                  onClick={() => setSelectedLocation(null)}
-                  className="w-full bg-gray-100 text-gray-900 py-4 rounded-xl font-semibold"
-                >
-                  Close
-                </button>
-              </div>
-
-              {userLocation && (
-                <div className="mt-6 bg-orange-50 border border-orange-200 rounded-xl p-4">
-                  <p className="text-sm text-orange-900">
-                    <span className="font-semibold">Distance:</span>{" "}
-                    {calculateDistance(userLocation.lat, userLocation.lng, selectedLocation.lat, selectedLocation.lng)}{" "}
-                    km from your location
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
