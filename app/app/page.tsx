@@ -10,14 +10,24 @@ import {
   Rocket,
   Grid3x3,
   List,
+  Download,
 } from "lucide-react"
 import Link from "next/link"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { getToken, logoutAsync } from "@/lib/auth"
 
+interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[]
+  prompt: () => Promise<void>
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>
+}
+
 export default function HomePage() {
   const router = useRouter()
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
+  const [showInstallButton, setShowInstallButton] = useState(false)
+  const [isInstalled, setIsInstalled] = useState(false)
 
   useEffect(() => {
     const token = getToken()
@@ -25,6 +35,77 @@ export default function HomePage() {
       router.push("/login")
     }
   }, [router])
+
+  useEffect(() => {
+    // Check if app is already installed
+    const checkInstalled = () => {
+      const isStandalone = window.matchMedia("(display-mode: standalone)").matches
+      const isIOSInstalled = (window.navigator as Navigator & { standalone?: boolean }).standalone === true
+      
+      if (isStandalone || isIOSInstalled) {
+        setIsInstalled(true)
+        setShowInstallButton(false)
+        return true
+      }
+      return false
+    }
+
+    if (checkInstalled()) return
+
+    // Check if user dismissed the prompt recently (within 7 days)
+    const dismissedTime = localStorage.getItem("pwa-install-dismissed-home")
+    if (dismissedTime) {
+      const daysSinceDismissed = (Date.now() - parseInt(dismissedTime)) / (1000 * 60 * 60 * 24)
+      if (daysSinceDismissed < 7) {
+        return
+      }
+    }
+
+    const handler = (e: Event) => {
+      console.log("beforeinstallprompt event fired on homepage")
+      e.preventDefault()
+      setDeferredPrompt(e as BeforeInstallPromptEvent)
+      setShowInstallButton(true)
+    }
+
+    const handleAppInstalled = () => {
+      console.log("App installed successfully")
+      setIsInstalled(true)
+      setShowInstallButton(false)
+      setDeferredPrompt(null)
+      localStorage.removeItem("pwa-install-dismissed-home")
+    }
+
+    window.addEventListener("beforeinstallprompt", handler)
+    window.addEventListener("appinstalled", handleAppInstalled)
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler)
+      window.removeEventListener("appinstalled", handleAppInstalled)
+    }
+  }, [])
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) {
+      console.log("No deferred prompt available")
+      return
+    }
+
+    try {
+      await deferredPrompt.prompt()
+      const { outcome } = await deferredPrompt.userChoice
+      console.log(`User choice: ${outcome}`)
+
+      if (outcome === "accepted") {
+        setShowInstallButton(false)
+        setIsInstalled(true)
+      }
+    } catch (error) {
+      console.error("Error during install prompt:", error)
+    }
+
+    setDeferredPrompt(null)
+  }
 
   const handleLogout = async () => {
     await logoutAsync()
@@ -34,7 +115,6 @@ export default function HomePage() {
   const services = [
     { icon: List, label: "Services", href: "/services", color: "bg-orange-100" },
     { icon: FileText, label: "Citizen Guide", href: "/citizen-guide", color: "bg-teal-100" },
-    // { icon: Grid3x3, label: "e-Services", href: "/e-services", color: "bg-orange-100" },
     { icon: AlertTriangle, label: "Emergency", href: "/emergency", color: "bg-red-100" },
     { icon: GraduationCap, label: "Students", href: "/students", color: "bg-orange-100" },
     { icon: Rocket, label: "Startup", href: "/startup", color: "bg-orange-100" },
@@ -71,13 +151,34 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Greeting */}
-          <div className="mb-2">
-            <h1 className="text-2xl lg:text-3xl font-bold text-purple-900 leading-tight">
-              Magandang umaga,
-              <br />
-              Calapeño!
-            </h1>
+          {/* Greeting with Install Button */}
+          <div className="mb-2 flex items-start justify-between gap-3">
+            <div className="flex-1">
+              <h1 className="text-2xl lg:text-3xl font-bold text-purple-900 leading-tight">
+                Magandang umaga,
+                <br />
+                Calapeño!
+              </h1>
+            </div>
+            
+            {/* Install Button */}
+            {showInstallButton && !isInstalled && (
+              <button
+                onClick={handleInstallClick}
+                className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-2 rounded-lg text-sm font-semibold shadow-lg hover:shadow-xl active:scale-95 transition-all"
+              >
+                <Download className="w-4 h-4" />
+                <span className="hidden sm:inline">Install</span>
+              </button>
+            )}
+
+            {/* Installed Badge */}
+            {isInstalled && (
+              <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-lg text-sm font-medium">
+                <span className="text-green-600">✓</span>
+                <span className="hidden sm:inline">Installed</span>
+              </div>
+            )}
           </div>
         </div>
       </header>

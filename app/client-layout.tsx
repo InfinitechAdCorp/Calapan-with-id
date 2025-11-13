@@ -15,9 +15,10 @@ export default function ClientLayout({
 }>) {
   const pathname = usePathname()
 
-  // Hide sidebar and bottom nav on auth pages
   const isAuthRoute =
-    pathname?.startsWith("/login") || pathname?.startsWith("/register") || pathname?.startsWith("/forgot-password")
+    pathname?.startsWith("/login") ||
+    pathname?.startsWith("/register") ||
+    pathname?.startsWith("/forgot-password")
   const isAdminRoute = pathname?.startsWith("/admin")
 
   return (
@@ -28,7 +29,9 @@ export default function ClientLayout({
         </Suspense>
       )}
 
-      <div className={!isAuthRoute && !isAdminRoute ? "lg:pl-64 lg:pr-4" : ""}>{children}</div>
+      <div className={!isAuthRoute && !isAdminRoute ? "lg:pl-64 lg:pr-4" : ""}>
+        {children}
+      </div>
 
       {!isAuthRoute && !isAdminRoute && (
         <Suspense fallback={<div>Loading...</div>}>
